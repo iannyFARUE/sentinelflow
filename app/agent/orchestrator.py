@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from sqlalchemy.orm import Session
 
 from app.agent.planner import simple_planner
+from app.agent.llm_planner import llm_plan
 from app.agent.policy import evaluate_plan
 from app.agent.types import AgentPlan, PlanStepType, ToolName
 from app.agent.memory import PendingConfirmation, save_pending_confirmation
@@ -70,7 +71,8 @@ def handle_message(
         # For now: ask user to confirm with token (more robust), implemented below via normal flow.
         pass
 
-    plan = simple_planner(message, user_id=user_id)
+    plan = llm_plan(message, user_id=user_id)
+
     update_trace(db, trace_id=trace.id, assistant_message=None, plan=plan)
 
     # If plan asks user something

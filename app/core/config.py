@@ -11,5 +11,10 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./sentinelflow.db"
     log_level: str = "INFO"
 
+    planner_mode: str = "heuristic"  # "llm" or "heuristic"
+    openai_api_key: str | None = None
+    openai_model: str = "gpt-5.2"
+
+
 
 settings = Settings()
