@@ -20,7 +20,7 @@ export default function ChatConsole() {
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
-      text: "Seed data, pick a user, then try: “buy me a keyboard”.",
+      text: 'Seed data, pick a user, then try: "buy me a keyboard".',
     },
   ]);
 
@@ -56,7 +56,7 @@ export default function ChatConsole() {
       setMessages([
         {
           role: "assistant",
-          text: "Seeded ✅ Pick a user and start chatting.",
+          text: "Seeded. Pick a user and start chatting.",
         },
       ]);
     } catch (e: any) {
@@ -118,64 +118,111 @@ export default function ChatConsole() {
 
   return (
     <div className="row cols-2">
-      <div className="card">
-        <div className="h2">Agent Console</div>
-
-        <div style={{ display: "grid", gap: 10 }}>
-          <div
-            style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}
-          >
-            <div>
-              <div className="small muted">User</div>
-              <select
-                className="select"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-              >
-                <option value="">(none)</option>
-                {users.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.full_name} — {u.email}
-                  </option>
-                ))}
-              </select>
-              <div className="small muted" style={{ marginTop: 6 }}>
-                {selectedUser ? (
-                  <>
-                    Selected: <span className="kbd">{selectedUser.id}</span>
-                  </>
-                ) : (
-                  "Select a user for tool calls."
-                )}
-              </div>
+      <div className="card" style={{ padding: 18, display: "grid", gap: 14 }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <div className="h2">Agent Console</div>
+            <div className="small muted">
+              Governed chat with approval gates and trace logging.
             </div>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <div className="badge">
+              Session
+              <span className="kbd" style={{ marginLeft: 8 }}>
+                {sessionId}
+              </span>
+            </div>
+            <div className="badge">
+              {selectedUser ? "User selected" : "No user"}
+            </div>
+          </div>
+        </div>
 
-            <div>
-              <div className="small muted">Session</div>
-              <div style={{ display: "flex", gap: 10 }}>
-                <input
-                  className="input"
-                  value={sessionId}
-                  onChange={(e) => setSessionId(e.target.value)}
-                  placeholder="demo-1"
-                />
-                <button
-                  className="btn"
-                  onClick={() => setSessionId(uid("demo"))}
-                  disabled={busy}
-                >
-                  New
-                </button>
-              </div>
-              <div className="small muted" style={{ marginTop: 6 }}>
-                Keep the same session_id to test multi-turn memory.
-              </div>
+        <div
+          style={{
+            display: "grid",
+            gap: 12,
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          }}
+        >
+          <div className="card" style={{ padding: 14 }}>
+            <div className="small muted">User</div>
+            <select
+              className="select"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+            >
+              <option value="">(none)</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.full_name} - {u.email}
+                </option>
+              ))}
+            </select>
+            <div className="small muted" style={{ marginTop: 6 }}>
+              {selectedUser ? (
+                <>
+                  Selected: <span className="kbd">{selectedUser.id}</span>
+                </>
+              ) : (
+                "Select a user for tool calls."
+              )}
             </div>
           </div>
 
-          <div className="hr" />
+          <div className="card" style={{ padding: 14 }}>
+            <div className="small muted">Session</div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <input
+                className="input"
+                value={sessionId}
+                onChange={(e) => setSessionId(e.target.value)}
+                placeholder="demo-1"
+              />
+              <button
+                className="btn"
+                onClick={() => setSessionId(uid("demo"))}
+                disabled={busy}
+              >
+                New
+              </button>
+            </div>
+            <div className="small muted" style={{ marginTop: 6 }}>
+              Keep the same session_id to test multi-turn memory.
+            </div>
+          </div>
+        </div>
 
-          <div ref={listRef} className="msglist">
+        <div className="card" style={{ padding: 14 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <div className="h2">Conversation</div>
+            <div className="small muted">
+              {lastTraceId ? (
+                <>
+                  Trace: <span className="kbd">{lastTraceId}</span>
+                </>
+              ) : (
+                "No trace yet"
+              )}
+            </div>
+          </div>
+          <div ref={listRef} className="msglist" style={{ marginTop: 10 }}>
             {messages.map((m, i) => {
               const quick = m.meta?.quickConfirm as string | undefined;
               return (
@@ -194,7 +241,10 @@ export default function ChatConsole() {
               );
             })}
           </div>
+        </div>
 
+        <div className="card" style={{ padding: 14 }}>
+          <div className="small muted">Message</div>
           <textarea
             className="input"
             rows={3}
@@ -204,24 +254,17 @@ export default function ChatConsole() {
             onKeyDown={onKeyDown}
             disabled={busy}
           />
-
           <div
             style={{
               display: "flex",
               gap: 10,
               justifyContent: "space-between",
               alignItems: "center",
+              marginTop: 10,
+              flexWrap: "wrap",
             }}
           >
-            <div className="small muted">
-              {lastTraceId ? (
-                <>
-                  Last trace: <span className="kbd">{lastTraceId}</span>
-                </>
-              ) : (
-                "No trace yet."
-              )}
-            </div>
+            <div className="small muted">Cmd/Ctrl + Enter to send.</div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn" onClick={seed} disabled={busy}>
                 Seed
@@ -238,46 +281,59 @@ export default function ChatConsole() {
         </div>
       </div>
 
-      <div className="card">
-        <div className="h2">Demo shortcuts</div>
-        <div className="p muted" style={{ display: "grid", gap: 10 }}>
-          <div>
-            Multi-turn flow:
-            <div className="code">
-              {`1) "buy me a keyboard"
+      <div className="card" style={{ padding: 18, display: "grid", gap: 16 }}>
+        <div>
+          <div className="h2">Guided demo</div>
+          <div className="p muted" style={{ marginTop: 6 }}>
+            Follow the scripted flow to see approvals and traces in action.
+          </div>
+        </div>
+
+        <div className="card" style={{ padding: 14 }}>
+          <div className="small muted">Runbook</div>
+          <div className="code" style={{ marginTop: 8 }}>
+            {`1) "buy me a keyboard"
 2) "1"
 3) "confirm <token>"`}
-            </div>
           </div>
+        </div>
 
-          <div className="hr" />
+        <div className="card" style={{ padding: 14 }}>
+          <div className="small muted">Quick prompts</div>
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              flexWrap: "wrap",
+              marginTop: 8,
+            }}
+          >
+            {[
+              "buy me a keyboard",
+              "what is my balance",
+              "buy me a usb-c hub",
+              "show more",
+            ].map((t) => (
+              <button
+                key={t}
+                className="btn"
+                onClick={() => setInput(t)}
+                disabled={busy}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
 
-          <div>
-            Quick prompts:
-            <div
-              style={{
-                display: "flex",
-                gap: 8,
-                flexWrap: "wrap",
-                marginTop: 8,
-              }}
-            >
-              {[
-                "buy me a keyboard",
-                "what is my balance",
-                "buy me a usb-c hub",
-                "show more",
-              ].map((t) => (
-                <button
-                  key={t}
-                  className="btn"
-                  onClick={() => setInput(t)}
-                  disabled={busy}
-                >
-                  {t}
-                </button>
-              ))}
+        <div className="card" style={{ padding: 14 }}>
+          <div className="small muted">What to look for</div>
+          <div style={{ display: "grid", gap: 8, marginTop: 8 }}>
+            <div className="small muted">
+              Schema validation on every tool call
             </div>
+            <div className="small muted">Approval tokens for purchases</div>
+            <div className="small muted">Trace IDs for each conversation</div>
           </div>
         </div>
       </div>
