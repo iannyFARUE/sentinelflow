@@ -28,3 +28,4 @@ data/raw/*
 logs/*
 
 agent/models/*
+.txt
