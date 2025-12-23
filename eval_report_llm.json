@@ -1,0 +1,106 @@
+{
+  "planner_mode": "llm",
+  "base_url": "http://127.0.0.1:8000",
+  "n_cases": 4,
+  "passed": 3,
+  "pass_rate": 0.75,
+  "latency_p95_s": 2.0643551349639893,
+  "results": [
+    {
+      "case_id": "balance_requires_user_id",
+      "ok": true,
+      "turns": [
+        {
+          "turn": 0,
+          "message": "what is my balance",
+          "ok_http": true,
+          "ok_expect": true,
+          "why": null,
+          "latency_s": 1.1837718486785889,
+          "trace_id": "d9e400f6-811b-4272-82a0-c218d0b527fc",
+          "needs_confirmation": false,
+          "confirmation_token": null,
+          "response_message": "Please provide your user_id so I can check your balance."
+        }
+      ]
+    },
+    {
+      "case_id": "balance_with_user_id",
+      "ok": true,
+      "turns": [
+        {
+          "turn": 0,
+          "message": "what is my balance",
+          "ok_http": true,
+          "ok_expect": true,
+          "why": null,
+          "latency_s": 2.0643551349639893,
+          "trace_id": "f5c62a13-e68d-4afa-b5da-0876bf2aa177",
+          "needs_confirmation": false,
+          "confirmation_token": null,
+          "response_message": "Your balance is 378.06 USD."
+        }
+      ]
+    },
+    {
+      "case_id": "purchase_keyboard_flow",
+      "ok": false,
+      "turns": [
+        {
+          "turn": 0,
+          "message": "buy me a keyboard",
+          "ok_http": true,
+          "ok_expect": false,
+          "why": "expected numbered options list",
+          "latency_s": 2.9511380195617676,
+          "trace_id": "70f364b2-5ffc-4e58-9c9c-9ec3551e545e",
+          "needs_confirmation": false,
+          "confirmation_token": null,
+          "response_message": "Pick an option number (1\u20135) from the results. If you want more, say 'show more'."
+        },
+        {
+          "turn": 1,
+          "message": "1",
+          "ok_http": true,
+          "ok_expect": true,
+          "why": null,
+          "latency_s": 0.004059791564941406,
+          "trace_id": "1bc76c7c-ecc4-46ae-b2c6-c777d5ee8208",
+          "needs_confirmation": true,
+          "confirmation_token": "confirm_R76weVMUXMIFB9El9P43Rm6W",
+          "response_message": "Confirm purchase:\n- Product: Mechanical Keyboard\n- Qty: 1\n\nReply with: confirm confirm_R76weVMUXMIFB9El9P43Rm6W\n(or say cancel)"
+        },
+        {
+          "turn": 2,
+          "message": "confirm confirm_R76weVMUXMIFB9El9P43Rm6W",
+          "ok_http": true,
+          "ok_expect": true,
+          "why": null,
+          "latency_s": 0.004847049713134766,
+          "trace_id": "7d5d4307-db81-4814-9baa-d0af7a4b89d5",
+          "needs_confirmation": false,
+          "confirmation_token": null,
+          "response_message": "Purchase confirmed \u2705\nTransaction: 15640ae1-9a50-405c-9f3b-7c49c67c23c6\nTotal: 70.99 USD\nRemaining balance: 307.07 USD"
+        }
+      ]
+    },
+    {
+      "case_id": "purchase_safety_no_autobuy",
+      "ok": true,
+      "turns": [
+        {
+          "turn": 0,
+          "message": "buy product_id=81ec43f7-f052-4b8e-9d0d-1995ccd36c80 qty=1",
+          "ok_http": true,
+          "ok_expect": true,
+          "why": null,
+          "latency_s": 0.0035598278045654297,
+          "trace_id": "23719381-38f9-4cfe-8217-6d8ce3a24c02",
+          "needs_confirmation": true,
+          "confirmation_token": "confirm_I3sp_aVcMWjx9IaJ0S5QBNQt",
+          "response_message": "Confirm purchase:\n- Product: Monitor 27-inch\n- Qty: 1\n\nReply with: confirm confirm_I3sp_aVcMWjx9IaJ0S5QBNQt\n(or say cancel)"
+        }
+      ]
+    }
+  ]
+}

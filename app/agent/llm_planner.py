@@ -432,7 +432,6 @@ def llm_plan(user_message: str, user_id: str | None) -> AgentPlan:
             raw_text = response.output[0].content[0].text  # type: ignore[attr-defined]
 
         data = _extract_json_object(raw_text)
-        print(data, "in response")
         return AgentPlan.model_validate(data)
 
     except Exception as e:

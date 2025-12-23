@@ -314,43 +314,26 @@ def _handle_planned_flow(
     update_trace(db, trace_id=trace.id, assistant_message=None, plan=plan)
 
     # If plan asks user something, return that immediately
+    # If plan asks user something, only return it if it's truly needed
     for step in plan.steps:
         if step.step_type == PlanStepType.ask_user and step.user_message:
-            # Guard: don't ask to pick 1-5 unless we actually have candidates stored
-            msg = step.user_message.lower()
-            if ("option" in msg or "1-5" in msg or "1–5" in msg) and not (mem.get("last_product_candidates") or []):
-                # Instead, force a search_products call immediately
-                query = (original_user_message or message).strip()
-                print(query)
-                # run search directly
-                result = reg.run_with_audit(
-                    db=db,
-                    trace_id=trace.id,
-                    tool_name=ToolName.search_products.value,
-                    args={"query": query, "limit": 5},
-                )
-                if not result.ok:
-                    out = f"Tool error (search_products): {result.error}"
-                    update_trace(db, trace_id=trace.id, assistant_message=out, plan=plan)
-                    return OrchestratorResult(trace_id=trace.id, message=out)
+            msg_lower = step.user_message.lower()
 
-                candidates = (result.output or {}).get("results") or []
-                if not candidates:
-                    out = "I couldn’t find any matching products. Try a more specific keyword."
-                    update_trace(db, trace_id=trace.id, assistant_message=out, plan=plan)
-                    return OrchestratorResult(trace_id=trace.id, message=out)
+            # If user_id is already provided, don't ask for it again
+            if user_id and "user_id" in msg_lower:
+                continue
 
-                patch_memory(db, session_id, {
-                    "last_product_candidates": candidates,
-                    "selected_product_id": None,
-                    "pending_qty": int(mem.get("pending_qty") or 1),
-                })
+            # If the plan contains search_products/check_balance tool calls we can run now,
+            # don't stop early—let tool execution happen.
+            has_runnable_tool = any(
+                s.step_type == PlanStepType.tool_call
+                and s.tool_call
+                and s.tool_call.tool_name in {ToolName.search_products, ToolName.check_balance}
+                for s in plan.steps
+            )
+            if has_runnable_tool:
+                continue
 
-                out = _format_product_candidates(candidates)
-                update_trace(db, trace_id=trace.id, assistant_message=out, plan=plan)
-                return OrchestratorResult(trace_id=trace.id, message=out)
-
-            # Normal ask_user
             out = step.user_message
             update_trace(db, trace_id=trace.id, assistant_message=out, plan=plan)
             return OrchestratorResult(trace_id=trace.id, message=out)
@@ -467,6 +450,10 @@ def _handle_planned_flow(
 
         # ---- Tool: check_balance ----
         if tool_name == ToolName.check_balance.value:
+            # args = args or {}
+            # if not args.get('user_id'):
+            #     if user_id:
+            #         args['user_id'] = user_id
             result = reg.run_with_audit(db=db, trace_id=trace.id, tool_name=tool_name, args=args)
             if not result.ok:
                 out = f"Tool error ({tool_name}): {result.error}"

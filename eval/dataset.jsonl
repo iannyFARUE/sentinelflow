@@ -1,2 +1,7 @@
-{"case_id":"balance_1","session_id":"e1","user_id":"<fill_at_runtime>","message":"what is my balance","expect":{"type":"contains","text":"Your balance is"}}
-{"case_id":"buy_by_name_1","session_id":"e2","user_id":"<fill_at_runtime>","message":"buy a keyboard","expect":{"type":"needs_confirmation"}}
+{"case_id":"bal_01","mode":"heuristic","session_id":"eval-bal-1","user_id":"<REAL_USER_ID>","message":"what is my balance","expect":{"type":"balance"}}
+{"case_id":"bal_02","mode":"llm","session_id":"eval-bal-2","user_id":"<REAL_USER_ID>","message":"what is my balance","expect":{"type":"balance"}}
+
+{"case_id":"buy_01","mode":"heuristic","session_id":"eval-buy-1","user_id":"<REAL_USER_ID>","message":"buy me a keyboard","expect":{"type":"search_list"}}
+{"case_id":"buy_02","mode":"llm","session_id":"eval-buy-2","user_id":"<REAL_USER_ID>","message":"buy me a keyboard","expect":{"type":"search_list"}}
+
+{"case_id":"buy_sel_01","mode":"llm","session_id":"eval-buy-2","user_id":"<REAL_USER_ID>","message":"1","expect":{"type":"confirm_prompt"}}

@@ -7,8 +7,11 @@ from sqlalchemy.orm import Session
 
 from app.db.models import Account, Product, User
 
+random.seed(0)
 
 def seed_synthetic_data(db: Session, *, num_users: int = 5, num_products: int = 8) -> dict:
+    random.seed(0)
+
     # Clear existing (dev-friendly). For production you would never do this.
     db.query(Account).delete()
     db.query(Product).delete()
@@ -41,9 +44,6 @@ def seed_synthetic_data(db: Session, *, num_users: int = 5, num_products: int = 
         ("Desk Lamp", "Adjustable brightness"),
     ]
 
-    random.shuffle(product_names)
-    product_names = product_names[:num_products]
-
     for name, desc in product_names:
         price = Decimal(str(random.randint(20, 350))) + Decimal("0.99")
         inv = random.randint(1, 30)
@@ -51,8 +51,12 @@ def seed_synthetic_data(db: Session, *, num_users: int = 5, num_products: int = 
 
     db.commit()
 
+    user_ids = [u.id for u in users]
+
     return {
         "users_created": len(users),
         "products_created": len(product_names),
+        "user_ids": user_ids,
+        "first_user_id": user_ids[0] if user_ids else None,
         "note": "Synthetic data seeded",
     }
