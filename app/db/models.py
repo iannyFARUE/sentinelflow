@@ -173,3 +173,18 @@ class AuditLog(Base):
         Index("ix_audit_logs_tool_name", "tool_name"),
         Index("ix_audit_logs_status", "status"),
     )
+
+class SessionMemory(Base):
+    __tablename__ = "session_memory"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    session_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+
+    # store recent resolved entities as JSON text
+    memory_json: Mapped[str] = mapped_column(Text, nullable=False, default="{}")
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    __table_args__ = (Index("ix_session_memory_session_id", "session_id"),)

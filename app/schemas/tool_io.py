@@ -41,3 +41,11 @@ class UpdateDatabaseIn(BaseModel):
 
 class UpdateDatabaseOut(BaseModel):
     status: str
+
+
+class SearchProductsIn(BaseModel):
+    query: str = Field(..., min_length=1, max_length=120)
+    limit: int = Field(default=5, ge=1, le=10)
+
+class SearchProductsOut(BaseModel):
+    results: list[dict]

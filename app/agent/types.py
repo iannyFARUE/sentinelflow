@@ -21,6 +21,7 @@ class ToolName(str, Enum):
     check_balance = "check_balance"
     execute_purchase = "execute_purchase"
     update_database = "update_database"
+    search_products = "search_products"
 
 
 class ToolCall(BaseModel):

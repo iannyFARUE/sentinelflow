@@ -34,7 +34,6 @@ class ToolRegistry:
     def run_with_audit(self, *, db: Session, trace_id: str, tool_name: str, args: dict) -> ToolResult:
         fn = self.get(tool_name)
         input_json = json.dumps(args, ensure_ascii=False)
-
         try:
             result = fn(db, args)
             status = ToolCallStatus.ok if result.ok else ToolCallStatus.error

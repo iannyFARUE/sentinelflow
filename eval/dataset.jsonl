@@ -1,0 +1,2 @@
+{"case_id":"balance_1","session_id":"e1","user_id":"<fill_at_runtime>","message":"what is my balance","expect":{"type":"contains","text":"Your balance is"}}
+{"case_id":"buy_by_name_1","session_id":"e2","user_id":"<fill_at_runtime>","message":"buy a keyboard","expect":{"type":"needs_confirmation"}}
